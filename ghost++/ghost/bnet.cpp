@@ -2973,7 +2973,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         //
 
         else if( Command == "hostsg" && !Payload.empty( ) && IsLevel( User ) >= 8 && ! m_GHost->m_ChannelBotOnly )
-            m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, 1, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+            m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
 
         //
         // !LOAD (load config file)
@@ -3208,13 +3208,13 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         //
 
         else if( Command == "priv" && !Payload.empty( ) && IsLevel( User ) >= 8 && ! m_GHost->m_ChannelBotOnly )
-            m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, false, Payload, User, User, m_Server, 1, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+            m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
 
         //
         // !VIP (host vip games)
         //
         else if( Command == "vip" && !Payload.empty( ) && IsLevel( User ) >= 8 && ! m_GHost->m_ChannelBotOnly )
-            m_GHost->CreateGame( m_GHost->m_Map, GAME_PUBLIC, false, "[VIP] "+Payload, User, User, m_Server, 4, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+            m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
 
         //
         // !VIP Reg Needed
@@ -3273,7 +3273,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         // !RESERVED (host reserved only game)
         //
         else if( Command == "reserved" && !Payload.empty( ) && IsLevel( User ) >= 8 )
-            m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, false, "[R] "+Payload, User, User, m_Server, 5, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+            m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
 
         //
         // !PRIVBY (host private game by other player)
@@ -3289,7 +3289,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
             {
                 Owner = Payload.substr( 0, GameNameStart );
                 GameName = Payload.substr( GameNameStart + 1 );
-                m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, false, GameName, Owner, User, m_Server, 1, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+                m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, GameName, Owner, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
             }
         }
 
@@ -3298,7 +3298,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         //
 
         else if( Command == "pub" && !Payload.empty( ) && IsLevel( User ) >= 8 && ! m_GHost->m_ChannelBotOnly)
-            m_GHost->CreateGame( m_GHost->m_Map, GAME_PUBLIC, false, Payload, User, User, m_Server, 2, Whisper, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+            m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
 
         //
         // !PUBBY (host public game by other player)
@@ -3314,7 +3314,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
             {
                 Owner = Payload.substr( 0, GameNameStart );
                 GameName = Payload.substr( GameNameStart + 1 );
-                m_GHost->CreateGame( m_GHost->m_Map, GAME_PUBLIC, false, GameName, Owner, User, m_Server, 2, Whisper, m_GHost->m_CurrentGames.size( ) > 0 ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
+                m_GHost->VirtualStartup( m_GHost->m_Map, GAME_PRIVATE, true, GameName, Owner, User, m_Server, Whisper, 1, (m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby) ? m_GHost->m_CurrentGame->GetHostCounter( ) : 0 );
             }
         }
 
