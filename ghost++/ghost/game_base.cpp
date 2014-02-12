@@ -92,7 +92,7 @@ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16
     if(m_GHost->m_PersistLobby) {
         m_Socket = new CTCPServer( );
         m_EntryKey = rand( );
-        m_RefreshMessages = m_Host->m_RefreshMessages;
+        m_RefreshMessages = m_GHost->m_RefreshMessages;
         m_RefreshError = false;
         m_RefreshRehosted = false;
     }
@@ -127,7 +127,8 @@ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16
         m_Slots = m_Map->GetSlots( );
 
     if(! m_GHost->m_PersistLobby ) {
-        i( !m_GHost->m_IPBlackListFile.empty( ) )
+
+        if( !m_GHost->m_IPBlackListFile.empty( ) )
         {
             ifstream in;
             in.open( m_GHost->m_IPBlackListFile.c_str( ) );
