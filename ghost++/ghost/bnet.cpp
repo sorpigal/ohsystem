@@ -1807,7 +1807,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                             Player->SetDeleteMe( true );
                                             Player->SetLeftReason( m_GHost->m_Language->WasKickedByPlayer( User ) );
                                             Player->SetLeftCode( PLAYERLEAVE_LOBBY );
-                                            m_GHost->m_CurrentGame->OpenSlot( (*k)->GetSIDFromPID( Player->GetPID( ) ), false );
+                                            m_GHost->m_CurrentGame->OpenSlot( m_GHost->m_CurrentGame->GetSIDFromPID( Player->GetPID( ) ), false );
                                         }
                                     }
                                 }
@@ -2446,7 +2446,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                             Message = Message.substr( Start );
 
                         QueueChatCommand( m_GHost->m_Language->AnnounceMessageEnabled( ), User, Whisper );
-                        (*i)->SetAnnounce( Interval, Message );
+                        m_GHost->m_CurrentGame->SetAnnounce( Interval, Message );
                     }
                 }
             }
@@ -2637,7 +2637,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         // !AUTOSTART
         //
 
-        else if( Command == "autostart" && m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby && !(*i)->GetCountDownStarted( ) && IsLevel( User ) >= 9 )
+        else if( Command == "autostart" && m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby && !m_GHost->m_CurrentGame->GetCountDownStarted( ) && IsLevel( User ) >= 9 )
         {
             if( Payload.empty( ) || Payload == "off" )
             {
