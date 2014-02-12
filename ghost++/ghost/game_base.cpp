@@ -4352,7 +4352,7 @@ void CBaseGame :: EventGameStarted( )
         }
         m_GHost->m_Games.push_back( this );
     } else {
-        for( vector<CBaseGame *> :: iterator i = m_GHost->m_CurrentGames.begin( ); i != m_GHost->m_CurrentGames.end( ); ++i )
+        for( vector<CBNET *> :: iterator i = m_GHost->m_BNETs.begin( ); i != m_GHost->m_BNETs.end( ); ++i )
         {
             (*i)->QueueGameUncreate( );
             (*i)->QueueEnterChat( );
