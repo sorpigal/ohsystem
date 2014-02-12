@@ -1044,6 +1044,19 @@ string MySQLStatsSystem( void *conn, string *error, uint32_t botid, string user,
         }
         return "failed";
     }
+    else if(type=="forcegproxy")
+    {
+       bool success=false;
+       string Query="INSERT INTO oh_gproxy ( player, added, added_by ) VALUES ('"+EscUser+"', NOW(), '"+EscInput+"')";
+       if( mysql_real_query( (MYSQL *)conn, Query.c_str( ), Query.size( ) ) != 0 )
+           *error = mysql_error( (MYSQL *)conn );
+       else
+           success=true;
+       if(success)
+           return "Successfully forced from now User ["+EscUser+"] to use gproxy.";
+
+       return "failed";
+    }
 
     return "error";
 }
@@ -1617,7 +1630,7 @@ CDBBan *MySQLBanCheck( void *conn, string *error, uint32_t botid, string server,
             if( Row.size( ) == 11 )
                 Ban = new CDBBan( server, Row[0], Row[1], Row[2], Row[3], Row[4], Row[5], Row[6], Row[7], Row[8], Row[9], Row[10] );
             /* else
-            	*error = "error checking ban [" + server + " : " + user + "] - row doesn't have 6 columns"; */
+                *error = "error checking ban [" + server + " : " + user + "] - row doesn't have 6 columns"; */
 
             mysql_free_result( Result );
         }
@@ -2621,7 +2634,7 @@ double MySQLScoreCheck( void *conn, string *error, uint32_t botid, string catego
             if( Row.size( ) == 1 )
                 Score = UTIL_ToDouble( Row[0] );
             /* else
-            	*error = "error checking score [" + category + " : " + name + " : " + server + "] - row doesn't have 1 column"; */
+                *error = "error checking score [" + category + " : " + name + " : " + server + "] - row doesn't have 1 column"; */
 
             mysql_free_result( Result );
         }
