@@ -461,8 +461,7 @@ CGHost :: CGHost( CConfig *CFG )
     m_AutoHostGameName = CFG->GetString( "autohost_gamename", string( ) );
     m_AutoHostOwner = CFG->GetString( "autohost_owner", string( ) );
     m_LastAutoHostTime = GetTime( );
-    if(m_PersistLobby)
-        m_LastLANBroadcastTime = GetTime( );
+    m_LastLANBroadcastTime = GetTime( );
     m_LastCommandListTime = GetTime( );
     m_LastGameUpdateTime  = GetTime( );
     m_LastFlameListUpdate = 0;
@@ -526,7 +525,6 @@ CGHost :: CGHost( CConfig *CFG )
         string UserName = CFG->GetString( Prefix + "username", string( ) );
         string UserPassword = CFG->GetString( Prefix + "password", string( ) );
         string FirstChannel = CFG->GetString( Prefix + "firstchannel", "The Void" );
-        string RootAdmin = CFG->GetString( Prefix + "rootadmin", string( ) );
         string BNETCommandTrigger = CFG->GetString( Prefix + "commandtrigger", "!" );
 
         if( BNETCommandTrigger.empty( ) )
@@ -611,9 +609,10 @@ CGHost :: CGHost( CConfig *CFG )
     MapCFG.Read( m_MapCFGPath + m_DefaultMap );
     m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap );
 
+    m_AutoHostMap = new CMap( *m_Map );
+    m_SaveGame = new CSaveGame( );
+
     if(m_PersistLobby) {
-        m_AutoHostMap = new CMap( *m_Map );
-        m_SaveGame = new CSaveGame( );
         m_Protocol = new CGameProtocol( this );
         m_EntryKey = rand();
     }
@@ -937,7 +936,7 @@ bool CGHost :: Update( long usecBlock )
                     (*i)->QueueEnterChat( );
                 }
             }
-            else if( m_CurrentGame )
+            else
                 m_CurrentGame->UpdatePost( &send_fd );
         }
     } else {
