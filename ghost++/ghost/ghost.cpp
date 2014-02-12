@@ -1317,7 +1317,7 @@ bool CGHost :: Update( long usecBlock )
             string PlayerList="";
             for( unsigned char i = 0; i < m_CurrentGame->m_Slots.size( ); ++i )
             {
-                if( (*x)->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OCCUPIED && m_CurrentGame->m_Slots[i].GetComputer( ) == 0 )
+                if( m_CurrentGame->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OCCUPIED && m_CurrentGame->m_Slots[i].GetComputer( ) == 0 )
                 {
                     CGamePlayer *player = m_CurrentGame->GetPlayerFromSID( i );
 
@@ -1866,9 +1866,6 @@ void CGHost :: VirtualStartup( CMap *map, unsigned char gameState, bool saveGame
                 if( (*i)->GetServer( ) == creatorServer )
                     (*i)->QueueChatCommand( m_Language->UnableToCreateGameAnotherGameInLobby( gameName, m_CurrentGame->GetDescription( ) ), creatorName, whisper );
             }
-
-            if( m_AdminGame )
-                m_AdminGame->SendAllChat( m_Language->UnableToCreateGameAnotherGameInLobby( gameName, m_CurrentGame->GetDescription( ) ) );
 
             return;
         }
