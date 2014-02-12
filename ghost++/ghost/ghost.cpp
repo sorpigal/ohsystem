@@ -364,16 +364,14 @@ CGHost :: CGHost( CConfig *CFG )
     m_UDPSocket->SetBroadcastTarget( CFG->GetString( "udp_broadcasttarget", string( ) ) );
     m_UDPSocket->SetDontRoute( CFG->GetInt( "udp_dontroute", 0 ) == 0 ? false : true );
     m_ReconnectSocket = NULL;
-    if(m_PersistLobby)
-        m_Socket = NULL;
+    m_Socket = NULL;
     m_GPSProtocol = new CGPSProtocol( );
     m_GCBIProtocol = new CGCBIProtocol( );
     m_CRC = new CCRC32( );
     m_CRC->Initialize( );
     m_SHA = new CSHA1( );
     m_FinishedGames = 0;
-    if(!m_PersistLobby)
-        m_CurrentGame = NULL;
+    m_CurrentGame = NULL;
     m_CallableGameUpdate = NULL;
     m_CallableFlameList = NULL;
     m_CallableForcedGProxyList = NULL;
@@ -856,9 +854,10 @@ bool CGHost :: Update( long usecBlock )
     for( vector<CBaseGame *> :: iterator i = m_Games.begin( ); i != m_Games.end( ); ++i )
         NumFDs += (*i)->SetFD( &fd, &send_fd, &nfds );
 
-    for( vector<CBaseGame *> :: iterator i = m_CurrentGames.begin( ); i != m_CurrentGames.end( ); ++i )
-        NumFDs += (*i)->SetFD( &fd, &send_fd, &nfds );
-
+    if(m_PersistLobby) {
+        for( vector<CBaseGame *> :: iterator i = m_CurrentGames.begin( ); i != m_CurrentGames.end( ); ++i )
+            NumFDs += (*i)->SetFD( &fd, &send_fd, &nfds );
+    }
     // 4. the GProxy++ reconnect socket(s)
 
     if( m_Reconnect && m_ReconnectSocket )
