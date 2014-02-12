@@ -1429,7 +1429,7 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
                         m_GHost->m_CurrentGame->AddToSpoofed( m_Server, Tokens[2], false );
                 }
                 else
-                    m_CurrentGame->AddToSpoofed( m_Server, User, false );
+                    m_GHost->m_CurrentGame->AddToSpoofed( m_Server, User, false );
             }
         }
         if( m_GHost->m_PersistLobby ) {
@@ -1650,7 +1650,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*i)->SendAllChat( m_GHost->m_Language->UserMutedByRCON( Name, User ) );
+                                            (*k)->SendAllChat( m_GHost->m_Language->UserMutedByRCON( Name, User ) );
                                             Player->SetMuted( true );
                                         }
                                     }
@@ -1725,7 +1725,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*i)->SendAllChat(m_GHost->m_Language->UserUnMutedByRCON( Name, User ));
+                                            (*k)->SendAllChat(m_GHost->m_Language->UserUnMutedByRCON( Name, User ));
                                             Player->SetMuted( false );
                                         }
                                     }
@@ -1803,11 +1803,11 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*i)->SendAllChat(m_GHost->m_Language->UserKickedByRCON( Name, User ));
+                                            (*k)->SendAllChat(m_GHost->m_Language->UserKickedByRCON( Name, User ));
                                             Player->SetDeleteMe( true );
                                             Player->SetLeftReason( m_GHost->m_Language->WasKickedByPlayer( User ) );
                                             Player->SetLeftCode( PLAYERLEAVE_LOBBY );
-                                            (*i)->OpenSlot( (*i)->GetSIDFromPID( Player->GetPID( ) ), false );
+                                            (*k)->OpenSlot( (*k)->GetSIDFromPID( Player->GetPID( ) ), false );
                                         }
                                     }
                                 }
@@ -1826,7 +1826,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                         Player->SetDeleteMe( true );
                                         Player->SetLeftReason( m_GHost->m_Language->WasKickedByPlayer( User ) );
                                         Player->SetLeftCode( PLAYERLEAVE_LOST );
-                                        Success = true;
                                     }
                                 }
                             }
@@ -1865,7 +1864,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                         {
                             for( vector<CBaseGame *> :: iterator i = m_GHost->m_CurrentGames.begin( ); i != m_GHost->m_CurrentGames.end( ); ++i )
                                 (*i)->SendAllChat( "[" + User + "] " + Message );
-                            Success = true;
                         }
                     } else {
                         if( m_GHost->m_CurrentGame && User != "" && Message != "")
@@ -1979,7 +1977,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     if( fteam == Team )
                                     {
                                         m_GHost->m_CurrentGame->SendChat( (*k), "[TC:"+ User +"] "+ Message );
-                                        ´
                                     }
                                 }
                             }
@@ -2424,7 +2421,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
             if( Payload.empty( ) || Payload == "off" )
             {
                 QueueChatCommand( m_GHost->m_Language->AnnounceMessageDisabled( ), User, Whisper );
-                (*i)->SetAnnounce( 0, string( ) );
+                m_GHost->m_CurrentGame->SetAnnounce( 0, string( ) );
             }
             else
             {
