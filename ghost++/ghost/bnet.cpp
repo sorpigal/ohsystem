@@ -1650,7 +1650,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*k)->SendAllChat( m_GHost->m_Language->UserMutedByRCON( Name, User ) );
+                                            m_GHost->m_CurrentGame->SendAllChat( m_GHost->m_Language->UserMutedByRCON( Name, User ) );
                                             Player->SetMuted( true );
                                         }
                                     }
@@ -1725,7 +1725,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*k)->SendAllChat(m_GHost->m_Language->UserUnMutedByRCON( Name, User ));
+                                            m_GHost->m_CurrentGame->SendAllChat(m_GHost->m_Language->UserUnMutedByRCON( Name, User ));
                                             Player->SetMuted( false );
                                         }
                                     }
@@ -1803,11 +1803,11 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                                     {
                                         if( Player->GetName() == Name )
                                         {
-                                            (*k)->SendAllChat(m_GHost->m_Language->UserKickedByRCON( Name, User ));
+                                            m_GHost->m_CurrentGame->SendAllChat(m_GHost->m_Language->UserKickedByRCON( Name, User ));
                                             Player->SetDeleteMe( true );
                                             Player->SetLeftReason( m_GHost->m_Language->WasKickedByPlayer( User ) );
                                             Player->SetLeftCode( PLAYERLEAVE_LOBBY );
-                                            (*k)->OpenSlot( (*k)->GetSIDFromPID( Player->GetPID( ) ), false );
+                                            m_GHost->m_CurrentGame->OpenSlot( (*k)->GetSIDFromPID( Player->GetPID( ) ), false );
                                         }
                                     }
                                 }
@@ -2416,7 +2416,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         // !ANNOUNCE
         //
 
-        else if( Command == "announce" && m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby && !(*i)->GetCountDownStarted( ) )
+        else if( Command == "announce" && m_GHost->m_CurrentGame && !m_GHost->m_PersistLobby && !m_GHost->m_CurrentGame->GetCountDownStarted( ) )
         {
             if( Payload.empty( ) || Payload == "off" )
             {

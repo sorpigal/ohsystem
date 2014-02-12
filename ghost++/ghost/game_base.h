@@ -456,7 +456,6 @@ public:
     virtual void SetRefreshError( bool nRefreshError )					{
         m_RefreshError = nRefreshError;
     }
-    virtual void EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinPlayer *joinPlayer );
     virtual void EventGameRefreshed( string server );
 };
 
