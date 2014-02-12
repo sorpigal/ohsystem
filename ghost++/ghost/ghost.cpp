@@ -1324,7 +1324,7 @@ bool CGHost :: Update( long usecBlock )
                     if( player )
                         PlayerList += player->GetName( ) + "\t" + player->GetSpoofedRealm( ) + "\t" + UTIL_ToString( player->GetPing( m_LCPings ) ) + "\t";
                 }
-                else if( (*x)->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OPEN )
+                else if( m_CurrentGame->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OPEN )
                     PlayerList += "\t\t\t";
             }
             m_CallableGameUpdate = m_DB->ThreadedGameUpdate(m_CurrentGame->GetMapName(), m_AutoHostGameName, m_CurrentGame->GetOwnerName(), m_CurrentGame->GetCreatorName(), m_CurrentGame->GetSlotsOccupied(), PlayerList, m_CurrentGame->GetSlotsOccupied() + m_CurrentGame->GetSlotsOpen(), TotalGames, TotalPlayers, true, m_CurrentGame->m_HostCounter, m_CurrentGame->m_GameAlias );
