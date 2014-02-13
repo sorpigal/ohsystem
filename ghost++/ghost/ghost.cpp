@@ -698,7 +698,6 @@ CGHost :: ~CGHost( )
 
     delete m_Language;
     delete m_Map;
-    delete m_AdminMap;
     delete m_AutoHostMap;
     delete m_SaveGame;
 }
@@ -928,7 +927,7 @@ bool CGHost :: Update( long usecBlock )
                     (*i)->QueueEnterChat( );
                 }
             }
-            else
+            else if( m_CurrentGame )
                 m_CurrentGame->UpdatePost( &send_fd );
         }
     } else {
@@ -1304,20 +1303,15 @@ bool CGHost :: Update( long usecBlock )
                 m_CallableGameUpdate = m_DB->ThreadedGameUpdate((*x)->GetMapName(), m_AutoHostGameName, (*x)->GetOwnerName(), (*x)->GetCreatorName(), (*x)->GetSlotsOccupied(), PlayerList, (*x)->GetSlotsOccupied() + (*x)->GetSlotsOpen(), TotalGames, TotalPlayers, true, (*x)->m_HostCounter, (*x)->m_GameAlias );
             }
         } else {
-            string PlayerList="";
-            for( unsigned char i = 0; i < m_CurrentGame->m_Slots.size( ); ++i )
+            if(m_CurrentGame)
             {
-                if( m_CurrentGame->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OCCUPIED && m_CurrentGame->m_Slots[i].GetComputer( ) == 0 )
-                {
-                    CGamePlayer *player = m_CurrentGame->GetPlayerFromSID( i );
+                TotalGames++;
+                TotalPlayers += m_CurrentGame->GetNumHumanPlayers( );
 
-                    if( player )
-                        PlayerList += player->GetName( ) + "\t" + player->GetSpoofedRealm( ) + "\t" + UTIL_ToString( player->GetPing( m_LCPings ) ) + "\t";
-                }
-                else if( m_CurrentGame->m_Slots[i].GetSlotStatus( ) == SLOTSTATUS_OPEN )
-                    PlayerList += "\t\t\t";
+                m_CallableGameUpdate = m_DB->ThreadedGameUpdate(m_CurrentGame->GetMapName(), m_CurrentGame->GetGameName(), m_CurrentGame->GetOwnerName(), m_CurrentGame->GetCreatorName(), m_CurrentGame->GetSlotsOccupied(), m_CurrentGame->GetPlayerList( ), m_CurrentGame->GetSlotsOccupied() + m_CurrentGame->GetSlotsOpen(), TotalGames, TotalPlayers, true, m_CurrentGame->GetHostCounter (), m_CurrentGame->m_GameAlias );
             }
-            m_CallableGameUpdate = m_DB->ThreadedGameUpdate(m_CurrentGame->GetMapName(), m_AutoHostGameName, m_CurrentGame->GetOwnerName(), m_CurrentGame->GetCreatorName(), m_CurrentGame->GetSlotsOccupied(), PlayerList, m_CurrentGame->GetSlotsOccupied() + m_CurrentGame->GetSlotsOpen(), TotalGames, TotalPlayers, true, m_CurrentGame->m_HostCounter, m_CurrentGame->m_GameAlias );
+        else
+                    m_CallableGameUpdate = m_DB->ThreadedGameUpdate("", "", "", "", 0, "", 0, TotalGames, TotalPlayers, true);
         }
         m_LastGameUpdateTime = GetTime();
     }
