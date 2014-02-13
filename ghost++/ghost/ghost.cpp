@@ -609,6 +609,9 @@ CGHost :: CGHost( CConfig *CFG )
     MapCFG.Read( m_MapCFGPath + m_DefaultMap );
     m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap );
 
+    if(!m_PersistLobby)
+        LoadIPToCountryData( );
+
     m_AutoHostMap = new CMap( *m_Map );
     m_SaveGame = new CSaveGame( );
 
