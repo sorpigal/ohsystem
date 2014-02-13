@@ -364,7 +364,8 @@ CGHost :: CGHost( CConfig *CFG )
     m_UDPSocket->SetBroadcastTarget( CFG->GetString( "udp_broadcasttarget", string( ) ) );
     m_UDPSocket->SetDontRoute( CFG->GetInt( "udp_dontroute", 0 ) == 0 ? false : true );
     m_ReconnectSocket = NULL;
-    m_Socket = NULL;
+    if(m_PersistLobby)
+	m_Socket = NULL;
     m_GPSProtocol = new CGPSProtocol( );
     m_GCBIProtocol = new CGCBIProtocol( );
     m_CRC = new CCRC32( );
@@ -672,7 +673,8 @@ CGHost :: ~CGHost( )
 {
     delete m_UDPSocket;
     delete m_ReconnectSocket;
-    delete m_Socket;
+    if(m_PersistLobby)
+	delete m_Socket;
 
     for( vector<CTCPSocket *> :: iterator i = m_ReconnectSockets.begin( ); i != m_ReconnectSockets.end( ); ++i )
         delete *i;
