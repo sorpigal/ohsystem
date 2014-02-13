@@ -1186,10 +1186,11 @@ bool CGHost :: Update( long usecBlock )
 
     if( m_LastAutoHostTime != 0 && GetTime( ) - m_LastAutoHostTime >= 10 && m_PersistLobby )
     {
+        CONSOLE_Print("Starting persist lobby for autohost");
         VirtualStartup( m_AutoHostMap, GAME_PUBLIC, false, m_AutoHostGameName, m_AutoHostOwner, m_AutoHostOwner, m_AutoHostServer, false, m_AutoHostGameType, m_HostCounter );
         m_LastAutoHostTime = 0;
     } else if( !m_AutoHostGameName.empty( ) && m_AutoHostMaximumGames != 0 && m_AutoHostAutoStartPlayers != 0 && GetTime( ) - m_LastAutoHostTime >= 30 && m_ReservedHostCounter != 0 ) {
-
+        CONSOLE_Print("Starting normal game hosting");
         if( !m_ExitingNice && m_Enabled && !m_CurrentGame && m_Games.size( ) < m_MaxGames && m_Games.size( ) < m_AutoHostMaximumGames )
         {
             if( m_AutoHostMap->GetValid( ) )
@@ -1389,7 +1390,7 @@ bool CGHost :: Update( long usecBlock )
         m_CallableDeniedNamesList = NULL;
     }
 
-// refresh announce list all 60 minutes
+    // refresh announce list all 60 minutes
     if( !m_CallableAnnounceList && ( GetTime( ) - m_LastAnnounceListUpdate >= 3600 || m_LastAnnounceListUpdate==0 ) )
     {
         m_CallableAnnounceList = m_DB->ThreadedAnnounceList( );
@@ -2192,6 +2193,7 @@ uint32_t CGHost :: GetNewHostCounter( )
     }
     return m_HostCounter;
 }
+
 void CGHost :: LoadRanks( )
 {
     //TODO Fix if the file is empty, dont check levels else there is a crash

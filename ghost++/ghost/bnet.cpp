@@ -50,8 +50,6 @@ using namespace boost :: filesystem;
 
 CBNET :: CBNET( CGHost *nGHost, string nServer, string nServerAlias, string nBNLSServer, uint16_t nBNLSPort, uint32_t nBNLSWardenCookie, string nCDKeyROC, string nCDKeyTFT, string nCountryAbbrev, string nCountry, uint32_t nLocaleID, string nUserName, string nUserPassword, string nFirstChannel, char nCommandTrigger, bool nHoldFriends, bool nHoldClan, bool nPublicCommands, unsigned char nWar3Version, BYTEARRAY nEXEVersion, BYTEARRAY nEXEVersionHash, string nPasswordHashType, string nPVPGNRealmName, uint32_t nMaxMessageLength, uint32_t nHostCounterID )
 {
-    // todotodo: append path seperator to Warcraft3Path if needed
-
     m_GHost = nGHost;
     m_Socket = new CTCPClient( );
     m_Protocol = new CBNETProtocol( );
@@ -98,20 +96,12 @@ CBNET :: CBNET( CGHost *nGHost, string nServer, string nServerAlias, string nBNL
     m_CDKeyROC = nCDKeyROC;
     m_CDKeyTFT = nCDKeyTFT;
 
-    // remove dashes and spaces from CD keys and convert to uppercase
-
     m_CDKeyROC.erase( remove( m_CDKeyROC.begin( ), m_CDKeyROC.end( ), '-' ), m_CDKeyROC.end( ) );
     m_CDKeyTFT.erase( remove( m_CDKeyTFT.begin( ), m_CDKeyTFT.end( ), '-' ), m_CDKeyTFT.end( ) );
     m_CDKeyROC.erase( remove( m_CDKeyROC.begin( ), m_CDKeyROC.end( ), ' ' ), m_CDKeyROC.end( ) );
     m_CDKeyTFT.erase( remove( m_CDKeyTFT.begin( ), m_CDKeyTFT.end( ), ' ' ), m_CDKeyTFT.end( ) );
     transform( m_CDKeyROC.begin( ), m_CDKeyROC.end( ), m_CDKeyROC.begin( ), (int(*)(int))toupper );
     transform( m_CDKeyTFT.begin( ), m_CDKeyTFT.end( ), m_CDKeyTFT.begin( ), (int(*)(int))toupper );
-
-    //if( m_CDKeyROC.size( ) != 26 )
-    //      CONSOLE_Print( "[BNET: " + m_ServerAlias + "] warning - your ROC CD key is not 26 characters long and is probably invalid" );
-
-    //if( m_GHost->m_TFT && m_CDKeyTFT.size( ) != 26 )
-    //      CONSOLE_Print( "[BNET: " + m_ServerAlias + "] warning - your TFT CD key is not 26 characters long and is probably invalid" );
 
     m_CountryAbbrev = nCountryAbbrev;
     m_Country = nCountry;
@@ -756,14 +746,8 @@ bool CBNET :: Update( void *fd, void *send_fd )
                               m_GHost->GetAliasName( i->second->GetAlias( ) )
                                                                                   );
                 } else if(Alias.find("legion")!=string::npos) {
-                    /**
-                     * Legion TD template
-                     */
                     Summary="G: "+UTIL_ToString( StatsPlayerSummary->GetGames( ) )+" Score: "+UTIL_ToString( StatsPlayerSummary->GetScore( ), 0 )+" W/L/D: "+UTIL_ToString( StatsPlayerSummary->GetWins( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetLosses( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetDraw( ) )+" W/G/I: "+UTIL_ToString( StatsPlayerSummary->GetCreeps( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgCreeps( ), 1)+")/"+UTIL_ToString( StatsPlayerSummary->GetTowers( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgTowers( ), 1)+")/"+UTIL_ToString( StatsPlayerSummary->GetNeutrals( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgNeutrals( ), 1)+") K/L: "+UTIL_ToString( StatsPlayerSummary->GetKills( ) )+"("+UTIL_ToString( StatsPlayerSummary->GetAvgKills( ), 1 )+")/"+UTIL_ToString( StatsPlayerSummary->GetDenies( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgDenies( ), 1)+")";
                 } else if(Alias.find("tree")!=string::npos) {
-                    /**
-                     * Tree Tag template
-                     */
                     Summary="G: "+UTIL_ToString( StatsPlayerSummary->GetGames( ) )+" Score: "+UTIL_ToString( StatsPlayerSummary->GetScore( ), 0 )+" W/L/D: "+UTIL_ToString( StatsPlayerSummary->GetWins( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetLosses( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetDraw( ) )+" K/D/S: "+UTIL_ToString( StatsPlayerSummary->GetKills( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgKills( ), 1)+")/"+UTIL_ToString( StatsPlayerSummary->GetDeaths( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgDeaths( ), 1)+")/"+UTIL_ToString( StatsPlayerSummary->GetAssists( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgAssists( ), 1)+") E/I: "+UTIL_ToString( StatsPlayerSummary->GetCreeps( ) )+"("+UTIL_ToString( StatsPlayerSummary->GetAvgCreeps( ), 1 )+")/"+UTIL_ToString( StatsPlayerSummary->GetDenies( ))+"("+UTIL_ToString( StatsPlayerSummary->GetAvgDenies( ), 1)+")";
                 } else if( StatsPlayerSummary->GetWins( ) != 0 || StatsPlayerSummary->GetLosses( ) != 0 ) {
                     Summary="G: "+UTIL_ToString( StatsPlayerSummary->GetGames( ) )+" Score: "+UTIL_ToString( StatsPlayerSummary->GetScore( ), 0 )+" Rank: "+StatsPlayerSummary->GetRank()+" W/L/D: "+UTIL_ToString( StatsPlayerSummary->GetWins( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetLosses( ) )+"/"+UTIL_ToString( StatsPlayerSummary->GetDraw( ) );
@@ -817,15 +801,12 @@ bool CBNET :: Update( void *fd, void *send_fd )
         m_LastLogUpdateTime = GetTime();
     }
 
-    // refresh the permission list every 5 minutes
-
     if( !m_CallablePList && GetTime( ) - m_LastAdminRefreshTime >= 300 )
     {
         m_CallablePList = m_GHost->m_DB->ThreadedPList( m_Server );
         m_LastAdminRefreshTime = GetTime( );
     }
 
-    // checking for finished games
     if( GetTime( ) - m_GHost->m_CheckForFinishedGames >= 120 && m_GHost->m_StatsUpdate )
     {
 #ifdef WIN32
@@ -834,7 +815,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
         system("./stats");
 #endif
         m_GHost->m_CheckForFinishedGames = GetTime();
-//              m_GHost->m_FinishedGames--;
     }
 
     if( m_CallablePList && m_CallablePList->GetReady( ) )
@@ -846,10 +826,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
         m_CallablePList = NULL;
         m_LastAdminRefreshTime = GetTime( );
     }
-
-    // remove temp bans every 5 min
-    // refresh the ban list every 5 minutes
-
     if( !m_CallableBanList && GetTime( ) - m_LastBanRefreshTime >= 300 )
     {
         m_CallableBanList = m_GHost->m_DB->ThreadedBanList( m_Server );
@@ -858,8 +834,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
     if( m_CallableBanList && m_CallableBanList->GetReady( ) && m_CallableTBRemove && m_CallableTBRemove->GetReady( ) )
     {
-        // CONSOLE_Print( "[BNET: " + m_ServerAlias + "] refreshed ban list (" + UTIL_ToString( m_Bans.size( ) ) + " -> " + UTIL_ToString( m_CallableBanList->GetResult( ).size( ) ) + " bans)" );
-
         for( vector<CDBBan *> :: iterator i = m_Bans.begin( ); i != m_Bans.end( ); ++i )
             delete *i;
 
@@ -873,14 +847,8 @@ bool CBNET :: Update( void *fd, void *send_fd )
         m_LastBanRefreshTime = GetTime( );
     }
 
-    // we return at the end of each if statement so we don't have to deal with errors related to the order of the if statements
-    // that means it might take a few ms longer to complete a task involving multiple steps (in this case, reconnecting) due to blocking or sleeping
-    // but it's not a big deal at all, maybe 100ms in the worst possible case (based on a 50ms blocking time)
-
     if( m_Socket->HasError( ) &&! m_FakeRealm )
     {
-        // the socket has an error
-
         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] disconnected from battle.net due to socket error" );
 
         if( m_Socket->GetError( ) == ECONNRESET && GetTime( ) - m_LastConnectionAttemptTime <= 15 )
@@ -901,8 +869,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
     if( !m_Socket->GetConnecting( ) && !m_Socket->GetConnected( ) && !m_WaitingToConnect &&! m_FakeRealm )
     {
-        // the socket was disconnected
-
         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] disconnected from battle.net" );
         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] waiting 90 seconds to reconnect" );
         m_GHost->EventBNETDisconnected( this );
@@ -919,13 +885,9 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
     if( m_Socket->GetConnected( ) )
     {
-        // the socket is connected and everything appears to be working properly
-
         m_Socket->DoRecv( (fd_set *)fd );
         ExtractPackets( );
         ProcessPackets( );
-
-        // update the BNLS client
 
         if( m_BNLSClient )
         {
@@ -944,9 +906,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
             }
         }
 
-        // check if at least one packet is waiting to be sent and if we've waited long enough to prevent flooding
-        // this formula has changed many times but currently we wait 1 second if the last packet was "small", 3.5 seconds if it was "medium", and 4 seconds if it was "big"
-
         uint32_t WaitTicks = 0;
 
         if( m_LastOutPacketSize < 10 )
@@ -960,8 +919,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
         else
             WaitTicks = 5500;
 
-        // add on frequency delay
-
         WaitTicks += m_FrequencyDelayTimes * 60;
 
         if( !m_OutPackets.empty( ) && GetTicks( ) - m_LastOutPacketTicks >= WaitTicks )
@@ -973,8 +930,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
             m_LastOutPacketSize = m_OutPackets.front( ).size( );
             m_OutPackets.pop( );
 
-            // reset frequency delay (or increment it)
-
             if( m_FrequencyDelayTimes >= 100 || GetTicks( ) > m_LastOutPacketTicks + WaitTicks + 500 )
                 m_FrequencyDelayTimes = 0;
             else
@@ -982,8 +937,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
             m_LastOutPacketTicks = GetTicks( );
         }
-
-        // send a null packet every 60 seconds to detect disconnects
 
         if( GetTime( ) - m_LastNullTime >= 60 && GetTicks( ) - m_LastOutPacketTicks >= 60000 )
         {
@@ -997,12 +950,8 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
     if( m_Socket->GetConnecting( ) &&! m_FakeRealm)
     {
-        // we are currently attempting to connect to battle.net
-
         if( m_Socket->CheckConnect( ) )
         {
-            // the connection attempt completed
-
             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] connected" );
             m_GHost->EventBNETConnected( this );
             m_Socket->PutBytes( m_Protocol->SEND_PROTOCOL_INITIALIZE_SELECTOR( ) );
@@ -1018,8 +967,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
         }
         else if( GetTime( ) - m_LastConnectionAttemptTime >= 15 )
         {
-            // the connection attempt timed out (15 seconds)
-
             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] connect timed out" );
             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] waiting 90 seconds to reconnect" );
             m_GHost->EventBNETConnectTimedOut( this );
@@ -1032,8 +979,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
     if( !m_Socket->GetConnecting( ) && !m_Socket->GetConnected( ) && ( m_FirstConnect || GetTime( ) - m_LastDisconnectedTime >= 90 )  &&! m_FakeRealm)
     {
-        // attempt to connect to battle.net
-
         m_FirstConnect = false;
         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] connecting to server [" + m_Server + "] on port 6112" );
         m_GHost->EventBNETConnecting( this );
@@ -1053,8 +998,6 @@ bool CBNET :: Update( void *fd, void *send_fd )
         }
         else
         {
-            // use cached server IP address since resolving takes time and is blocking
-
             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] using cached server IP address " + m_ServerIP );
             m_Socket->Connect( m_GHost->m_BindAddress, m_ServerIP, 6112 );
         }
@@ -1069,21 +1012,13 @@ bool CBNET :: Update( void *fd, void *send_fd )
 
 void CBNET :: ExtractPackets( )
 {
-    // extract as many packets as possible from the socket's receive buffer and put them in the m_Packets queue
-
     string *RecvBuffer = m_Socket->GetBytes( );
     BYTEARRAY Bytes = UTIL_CreateByteArray( (unsigned char *)RecvBuffer->c_str( ), RecvBuffer->size( ) );
 
-    // a packet is at least 4 bytes so loop as long as the buffer contains 4 bytes
-
     while( Bytes.size( ) >= 4 )
     {
-        // byte 0 is always 255
-
         if( Bytes[0] == BNET_HEADER_CONSTANT )
         {
-            // bytes 2 and 3 contain the length of the packet
-
             uint16_t Length = UTIL_ByteArrayToUInt16( Bytes, false, 2 );
 
             if( Length >= 4 )
@@ -1121,9 +1056,6 @@ void CBNET :: ProcessPackets( )
     vector<CIncomingFriendList *> Friends;
     vector<CIncomingClanList *> Clans;
 
-    // process all the received packets in the m_Packets queue
-    // this normally means sending some kind of response
-
     while( !m_Packets.empty( ) )
     {
         CCommandPacket *Packet = m_Packets.front( );
@@ -1134,18 +1066,11 @@ void CBNET :: ProcessPackets( )
             switch( Packet->GetID( ) )
             {
             case CBNETProtocol :: SID_NULL:
-                // warning: we do not respond to NULL packets with a NULL packet of our own
-                // this is because PVPGN servers are programmed to respond to NULL packets so it will create a vicious cycle of useless traffic
-                // official battle.net servers do not respond to NULL packets
-
                 m_Protocol->RECEIVE_SID_NULL( Packet->GetData( ) );
                 break;
 
             case CBNETProtocol :: SID_GETADVLISTEX:
                 GameHost = m_Protocol->RECEIVE_SID_GETADVLISTEX( Packet->GetData( ) );
-
-                //if( GameHost )
-                //      CONSOLE_Print( "[BNET: " + m_ServerAlias + "] joining game [" + GameHost->GetGameName( ) + "]" );
 
                 delete GameHost;
                 GameHost = NULL;
@@ -1198,9 +1123,6 @@ void CBNET :: ProcessPackets( )
                 {
                     if( m_BNCSUtil->HELP_SID_AUTH_CHECK( m_GHost->m_TFT, m_GHost->m_Warcraft3Path, m_CDKeyROC, m_CDKeyTFT, m_Protocol->GetValueStringFormulaString( ), m_Protocol->GetIX86VerFileNameString( ), m_Protocol->GetClientToken( ), m_Protocol->GetServerToken( ) ) )
                     {
-                        // override the exe information generated by bncsutil if specified in the config file
-                        // apparently this is useful for pvpgn users
-
                         if( m_EXEVersion.size( ) == 4 )
                         {
                             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] using custom exe version bnet_custom_exeversion = " + UTIL_ToString( m_EXEVersion[0] ) + " " + UTIL_ToString( m_EXEVersion[1] ) + " " + UTIL_ToString( m_EXEVersion[2] ) + " " + UTIL_ToString( m_EXEVersion[3] ) );
@@ -1219,9 +1141,6 @@ void CBNET :: ProcessPackets( )
                             CONSOLE_Print( "[BNET: " + m_ServerAlias + "] attempting to auth as Warcraft III: Reign of Chaos" );
 
                         m_Socket->PutBytes( m_Protocol->SEND_SID_AUTH_CHECK( m_GHost->m_TFT, m_Protocol->GetClientToken( ), m_BNCSUtil->GetEXEVersion( ), m_BNCSUtil->GetEXEVersionHash( ), m_BNCSUtil->GetKeyInfoROC( ), m_BNCSUtil->GetKeyInfoTFT( ), m_BNCSUtil->GetEXEInfo( ), "GHost" ) );
-
-                        // the Warden seed is the first 4 bytes of the ROC key hash
-                        // initialize the Warden handler
 
                         if( !m_BNLSServer.empty( ) )
                         {
@@ -1245,16 +1164,12 @@ void CBNET :: ProcessPackets( )
             case CBNETProtocol :: SID_AUTH_CHECK:
                 if( m_Protocol->RECEIVE_SID_AUTH_CHECK( Packet->GetData( ) ) )
                 {
-                    // cd keys accepted
-
                     CONSOLE_Print( "[BNET: " + m_ServerAlias + "] cd keys accepted" );
                     m_BNCSUtil->HELP_SID_AUTH_ACCOUNTLOGON( );
                     m_Socket->PutBytes( m_Protocol->SEND_SID_AUTH_ACCOUNTLOGON( m_BNCSUtil->GetClientKey( ), m_UserName ) );
                 }
                 else
                 {
-                    // cd keys not accepted
-
                     switch( UTIL_ByteArrayToUInt32( m_Protocol->GetKeyState( ), false ) )
                     {
                     case CBNETProtocol :: KR_ROC_KEY_IN_USE:
@@ -1288,16 +1203,12 @@ void CBNET :: ProcessPackets( )
 
                     if( m_PasswordHashType == "pvpgn" )
                     {
-                        // pvpgn logon
-
                         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] using pvpgn logon type (for pvpgn servers only)" );
                         m_BNCSUtil->HELP_PvPGNPasswordHash( m_UserPassword );
                         m_Socket->PutBytes( m_Protocol->SEND_SID_AUTH_ACCOUNTLOGONPROOF( m_BNCSUtil->GetPvPGNPasswordHash( ) ) );
                     }
                     else
                     {
-                        // battle.net logon
-
                         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] using battle.net logon type (for official battle.net servers only)" );
                         m_BNCSUtil->HELP_SID_AUTH_ACCOUNTLOGONPROOF( m_Protocol->GetSalt( ), m_Protocol->GetServerPublicKey( ) );
                         m_Socket->PutBytes( m_Protocol->SEND_SID_AUTH_ACCOUNTLOGONPROOF( m_BNCSUtil->GetM1( ) ) );
@@ -1316,8 +1227,6 @@ void CBNET :: ProcessPackets( )
             case CBNETProtocol :: SID_AUTH_ACCOUNTLOGONPROOF:
                 if( m_Protocol->RECEIVE_SID_AUTH_ACCOUNTLOGONPROOF( Packet->GetData( ) ) )
                 {
-                    // logon successful
-
                     CONSOLE_Print( "[BNET: " + m_ServerAlias + "] logon successful" );
                     m_LoggedIn = true;
                     m_GHost->EventBNETLoggedIn( this );
@@ -1329,8 +1238,6 @@ void CBNET :: ProcessPackets( )
                 else
                 {
                     CONSOLE_Print( "[BNET: " + m_ServerAlias + "] logon failed - invalid password, disconnecting" );
-
-                    // try to figure out if the user might be using the wrong logon type since too many people are confused by this
 
                     string Server = m_Server;
                     transform( Server.begin( ), Server.end( ), Server.begin( ), ::tolower );
@@ -1401,10 +1308,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
             m_GHost->EventBNETChat( this, User, Message );
         }
 
-        // handle spoof checking for current game
-        // this case covers whispers - we assume that anyone who sends a whisper to the bot with message "spoofcheck" should be considered spoof checked
-        // note that this means you can whisper "spoofcheck" even in a public game to manually spoofcheck if the /whois fails
-
         if( Event == CBNETProtocol :: EID_WHISPER && m_GHost->m_PersistLobby )
         {
             if( Message == "s" || Message == "sc" || Message == "spoof" || Message == "check" || Message == "spoofcheck" )
@@ -1415,14 +1318,8 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
                 m_GHost->m_CurrentGame->AddToSpoofed( m_Server, User, true );
             else if( Message.find( m_GHost->m_CurrentGame->GetGameName( ) ) != string :: npos )
             {
-                // look for messages like "entered a Warcraft III The Frozen Throne game called XYZ"
-                // we don't look for the English part of the text anymore because we want this to work with multiple languages
-                // it's a pretty safe bet that anyone whispering the bot with a message containing the game name is a valid spoofcheck
-
                 if( m_PasswordHashType == "pvpgn" && User == m_PVPGNRealmName )
                 {
-                    // the equivalent pvpgn message is: [PvPGN Realm] Your friend abc has entered a Warcraft III Frozen Throne game named "xyz".
-
                     vector<string> Tokens = UTIL_Tokenize( Message, ' ' );
 
                     if( Tokens.size( ) >= 3 )
@@ -1437,14 +1334,8 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
             {
                 if( Message.find( m_GHost->m_AutoHostGameName ) != string :: npos )
                 {
-                    // look for messages like "entered a Warcraft III The Frozen Throne game called XYZ"
-                    // we don't look for the English part of the text anymore because we want this to work with multiple languages
-                    // it's a pretty safe bet that anyone whispering the bot with a message containing the game name is a valid spoofcheck
-
                     if( m_PasswordHashType == "pvpgn" && User == m_PVPGNRealmName )
                     {
-                        // the equivalent pvpgn message is: [PvPGN Realm] Your friend abc has entered a Warcraft III Frozen Throne game named "xyz".
-
                         vector<string> Tokens = UTIL_Tokenize( Message, ' ' );
 
                         if( Tokens.size( ) >= 3 )
@@ -1459,8 +1350,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
         }
     }
 
-    // handle bot commands
-
     if( Message == "?trigger" && ( IsLevel( User ) >= 9 || ( m_PublicCommands && m_OutPackets.size( ) <= 3 ) ) )
         QueueChatCommand( m_GHost->m_Language->CommandTrigger( string( 1, m_CommandTrigger ) ), User, Whisper );
     else if( !Message.empty( ) && Message[0] == m_CommandTrigger )
@@ -1470,16 +1359,12 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 
     else if( Event == CBNETProtocol :: EID_CHANNEL )
     {
-        // keep track of current channel so we can rejoin it after hosting a game
         CONSOLE_Print( "[BNET: " + m_ServerAlias + "] joined channel [" + Message + "]" );
         m_CurrentChannel = Message;
     }
     else if( Event == CBNETProtocol :: EID_INFO )
     {
         CONSOLE_Print( "[INFO: " + m_ServerAlias + "] " + Message );
-
-        // extract the first word which we hope is the username
-        // this is not necessarily true though since info messages also include channel MOTD's and such
 
         string UserName;
         string :: size_type Split = Message.find( " " );
@@ -1489,18 +1374,11 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
         else
             UserName = Message.substr( 0 );
 
-        // handle spoof checking for current game
-        // this case covers whois results which are used when hosting a public game (we send out a "/whois [player]" for each player)
-        // at all times you can still /w the bot with "spoofcheck" to manually spoof check
         if( m_GHost->m_PersistLobby ) {
             for( vector<CBaseGame *> :: iterator i = m_GHost->m_CurrentGames.begin( ); i != m_GHost->m_CurrentGames.end( ); ++i )
             {
                 if( Message.find( "is using Warcraft III The Frozen Throne in game" ) != string :: npos || Message.find( "is using Warcraft III Frozen Throne and is currently in  game" ) != string :: npos )
                 {
-                    // check both the current game name and the last game name against the /whois response
-                    // this is because when the game is rehosted, players who joined recently will be in the previous game according to battle.net
-                    // note: if the game is rehosted more than once it is possible (but unlikely) for a false positive because only two game names are checked
-
                     if( Message.find( m_GHost->m_AutoHostGameName ) != string :: npos || Message.find( (*i)->GetLastGameName( ) ) != string :: npos )
                         (*i)->AddToSpoofed( m_Server, UserName, false );
                     else
@@ -1524,9 +1402,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
                     m_GHost->m_CurrentGame->SendAllChat( m_GHost->m_Language->SpoofDetectedIsInPrivateChannel( UserName ) );
                 if( Message.find( "is using Warcraft III The Frozen Throne in game" ) != string :: npos || Message.find( "is using Warcraft III Frozen Throne and is currently in  game" ) != string :: npos )
                 {
-                    // check both the current game name and the last game name against the /whois response
-                    // this is because when the game is rehosted, players who joined recently will be in the previous game according to battle.net
-                    // note: if the game is rehosted more than once it is possible (but unlikely) for a false positive because only two game names are checked
                     if( Message.find( m_GHost->m_CurrentGame->GetGameName( ) ) != string :: npos || Message.find( m_GHost->m_CurrentGame->GetLastGameName( ) ) != string :: npos )
                         m_GHost->m_CurrentGame->AddToSpoofed( m_Server, UserName, false );
                     else
@@ -1552,10 +1427,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 
 void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRoot )
 {
-
-    // extract the command trigger, the command, and the payload
-    // e.g. "!say hello world" -> command: "say", payload: "hello world"
-
     string Command;
     string Payload;
     string :: size_type PayloadStart = Message.find( " " );
@@ -1575,7 +1446,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         string level = GetLevelName( IsLevel( User ) );
         CONSOLE_Print( "[BNET] "+ level +" [" + User + "] sent command [" + Command + "] with payload [" + Payload + "]" );
 
-        //save admin log
         m_AdminLog.push_back( User + " cl" + "\t" + UTIL_ToString( IsLevel( User ) ) + "\t" + Command + "\t" + Payload );
 
         /**************************************
@@ -1879,10 +1749,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
             //
             else if( RCONCommand == "saygame" )
             {
-
-                // extract the game number and the message
-                // e.g. "3 hello everyone" -> game number: "3", message: "hello everyone"
-
                 string User;
                 uint32_t GameNumber;
                 string Message;
@@ -2068,8 +1934,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
 
                             if( ( (*k)->m_GameLoading || (*k)->m_GameLoaded ) && Froms.size( ) > 100 )
                             {
-                                // cut the text into multiple lines ingame
-
                                 (*k)->SendAllChat( Froms );
                                 Froms.clear( );
                             }
@@ -2258,9 +2122,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         {
             if( IsLevel( User ) >= 7 )
             {
-                // extract the victim and the reason
-                // e.g. "Varlock leaver after dying" -> victim: "Varlock", reason: "leaver after dying"
-
                 string Victim;
                 string Reason;
                 stringstream SS;
@@ -2942,6 +2803,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
         {
             QueueChatCommand( m_GHost->m_Language->ThereIsNoGameInTheLobby( UTIL_ToString( m_GHost->m_Games.size( ) ), UTIL_ToString( m_GHost->m_MaxGames ) ), User, Whisper );
         }
+
         //
         // !HOLD (hold a slot for someone)
         //
@@ -3058,8 +2920,6 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
 
         else if( Command == "loadsg" && !Payload.empty( ) && IsLevel( User ) >= 8 && ! m_GHost->m_ChannelBotOnly )
         {
-            // only load files in the current directory just to be safe
-
             if( Payload.find( "/" ) != string :: npos || Payload.find( "\\" ) != string :: npos )
                 QueueChatCommand( m_GHost->m_Language->UnableToLoadSaveGamesOutside( ), User, Whisper );
             else
@@ -4014,25 +3874,14 @@ void CBNET :: QueueGameRefresh( unsigned char state, string gameName, string hos
 
     if( m_LoggedIn && map )
     {
-        // construct a fixed host counter which will be used to identify players from this realm
-        // the fixed host counter's 4 most significant bits will contain a 4 bit ID (0-15)
-        // the rest of the fixed host counter will contain the 28 least significant bits of the actual host counter
-        // since we're destroying 4 bits of information here the actual host counter should not be greater than 2^28 which is a reasonable assumption
-        // when a player joins a game we can obtain the ID from the received host counter
-        // note: LAN broadcasts use an ID of 0, battle.net refreshes use an ID of 1-10, the rest are unused
-
         uint32_t FixedHostCounter = ( hostCounter & 0x0FFFFFFF ) | ( m_HostCounterID << 28 );
 
         if( saveGame )
         {
             uint32_t MapGameType = MAPGAMETYPE_SAVEDGAME;
 
-            // the state should always be private when creating a saved game
-
             if( state == GAME_PRIVATE )
                 MapGameType |= MAPGAMETYPE_PRIVATEGAME;
-
-            // use an invalid map width/height to indicate reconnectable games
 
             BYTEARRAY MapWidth;
             MapWidth.push_back( 192 );
@@ -4050,13 +3899,10 @@ void CBNET :: QueueGameRefresh( unsigned char state, string gameName, string hos
         {
             uint32_t MapGameType = map->GetMapGameType( );
             MapGameType |= MAPGAMETYPE_UNKNOWN0;
-            //Apply overwrite if not equal to 0
             MapGameType = ( m_GHost->m_MapGameType == 0 ) ? MapGameType : m_GHost->m_MapGameType;
 
             if( state == GAME_PRIVATE )
                 MapGameType |= MAPGAMETYPE_PRIVATEGAME;
-
-            // use an invalid map width/height to indicate reconnectable games
 
             BYTEARRAY MapWidth;
             MapWidth.push_back( 192 );
@@ -4132,8 +3978,6 @@ void CBNET :: UnqueuePackets( unsigned char type )
 
     while( !m_OutPackets.empty( ) )
     {
-        // todotodo: it's very inefficient to have to copy all these packets while searching the queue
-
         BYTEARRAY Packet = m_OutPackets.front( );
         m_OutPackets.pop( );
 
@@ -4151,18 +3995,12 @@ void CBNET :: UnqueuePackets( unsigned char type )
 
 void CBNET :: UnqueueChatCommand( string chatCommand )
 {
-    // hackhack: this is ugly code
-    // generate the packet that would be sent for this chat command
-    // then search the queue for that exact packet
-
     BYTEARRAY PacketToUnqueue = m_Protocol->SEND_SID_CHATCOMMAND( chatCommand );
     queue<BYTEARRAY> Packets;
     uint32_t Unqueued = 0;
 
     while( !m_OutPackets.empty( ) )
     {
-        // todotodo: it's very inefficient to have to copy all these packets while searching the queue
-
         BYTEARRAY Packet = m_OutPackets.front( );
         m_OutPackets.pop( );
 
@@ -4214,8 +4052,6 @@ string CBNET :: GetLevelName( uint32_t level )
 CDBBan *CBNET :: IsBannedName( string name )
 {
     transform( name.begin( ), name.end( ), name.begin( ), ::tolower );
-
-    // todotodo: optimize this - maybe use a map?
 
     for( vector<CDBBan *> :: iterator i = m_Bans.begin( ); i != m_Bans.end( ); ++i )
     {
