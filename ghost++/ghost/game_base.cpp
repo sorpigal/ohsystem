@@ -1,4 +1,4 @@
-/**
+	/**
 * Copyright [2013-2014] [OHsystem]
 *
 * We spent a lot of time writing this code, so show some respect:
@@ -89,7 +89,11 @@ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16
     m_VotedTimeStart = 0;
     m_Voted = false;
     m_PartTime = 7;
+<<<<<<< HEAD
     if(! m_GHost->m_PersistLobby) {
+=======
+    if(!m_GHost->m_PersistLobby) {
+>>>>>>> ad7cde88eeadbf960e32aad34ddd5011c7a59fb1
         m_Socket = new CTCPServer( );
         m_EntryKey = rand( );
         m_RefreshMessages = m_GHost->m_RefreshMessages;
