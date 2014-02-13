@@ -46,6 +46,7 @@ protected:
     // it also allows us to convert CPotentialPlayers to CGamePlayers without the CPotentialPlayer's destructor closing the socket
 
     CTCPSocket *m_Socket;
+    bool m_PersistLobby;
     queue<CCommandPacket *> m_Packets;
     bool m_DeleteMe;
     bool m_Error;
@@ -56,7 +57,7 @@ protected:
     bool m_Banned;
 
 public:
-    CPotentialPlayer( CGameProtocol *nProtocol, CBaseGame *nGame, CTCPSocket *nSocket );
+    CPotentialPlayer( CGameProtocol *nProtocol, CBaseGame *nGame, CTCPSocket *nSocket, bool nPersistLobby );
     virtual ~CPotentialPlayer( );
 
     virtual CTCPSocket *GetSocket( )				{

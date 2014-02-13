@@ -4492,7 +4492,7 @@ bool CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
             CBaseGame *targetGame = m_GHost->m_CurrentGames[number];
             joinPlayer->SetTransferJoin( true );
             joinPlayer->SetTransferPID( player->GetPID( ) );
-            CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket );
+            CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket, m_GHost->m_PersistLobby );
             targetGame->EventPlayerJoined( potentialPlayer, joinPlayer );
 
             delete potentialPlayer;
@@ -4534,7 +4534,7 @@ bool CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
             CBaseGame *targetGame = m_GHost->m_CurrentGames[GameNumber];
             joinPlayer->SetTransferJoin( true );
             joinPlayer->SetTransferPID( player->GetPID( ) );
-            CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket );
+            CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket, m_GHost->m_PersistLobby );
             targetGame->EventPlayerJoined( potentialPlayer, joinPlayer );
 
             delete potentialPlayer;

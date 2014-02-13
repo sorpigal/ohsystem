@@ -40,7 +40,7 @@
 // CPotentialPlayer
 //
 
-CPotentialPlayer :: CPotentialPlayer( CGameProtocol *nProtocol, CBaseGame *nGame, CTCPSocket *nSocket ) : m_Protocol( nProtocol ), m_Game( nGame ), m_Socket( nSocket ), m_DeleteMe( false ), m_Error( false ), m_IncomingJoinPlayer( NULL ), m_IncomingGarenaUser( NULL ), m_Banned( false )
+CPotentialPlayer :: CPotentialPlayer( CGameProtocol *nProtocol, CBaseGame *nGame, CTCPSocket *nSocket, bool nPersistLobby ) : m_Protocol( nProtocol ), m_Game( nGame ), m_Socket( nSocket ), m_PersistLobby( nPersistLobby ), m_DeleteMe( false ), m_Error( false ), m_IncomingJoinPlayer( NULL ), m_IncomingGarenaUser( NULL ), m_Banned( false )
 {
 
 }
@@ -55,8 +55,11 @@ CPotentialPlayer :: ~CPotentialPlayer( )
         delete m_Packets.front( );
         m_Packets.pop( );
     }
-    if( m_IncomingJoinPlayer )
+    if( m_IncomingJoinPlayer && m_PersistLobby )
         delete m_IncomingJoinPlayer;
+    else if(! m_PersistLobby)
+        delete m_IncomingJoinPlayer;
+
     delete m_IncomingGarenaUser;
 }
 

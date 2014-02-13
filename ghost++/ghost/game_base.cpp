@@ -1405,7 +1405,7 @@ bool CBaseGame :: Update( void *fd, void *send_fd )
                     if( m_GHost->m_TCPNoDelay )
                         NewSocket->SetNoDelay( true );
 
-                    m_Potentials.push_back( new CPotentialPlayer( m_Protocol, this, NewSocket ) );
+                    m_Potentials.push_back( new CPotentialPlayer( m_Protocol, this, NewSocket, m_GHost->m_PersistLobby ) );
                 }
                 else
                 {
@@ -2517,7 +2517,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
                         // let banned players "join" the game with virtual slots
                         // they will be given the admin and reason associated with their ban, and then kicked after a few seconds
 
-                        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+                        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
                         potentialCopy->SetBanned( );
                         potential->SetSocket( NULL );
                         potential->SetDeleteMe( true );
@@ -2555,7 +2555,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
                         potential->Send( m_Protocol->SEND_W3GS_SLOTINFOJOIN( 1, potential->GetSocket( )->GetPort( ), potential->GetExternalIP( ), Slots, 0, m_Map->GetMapLayoutStyle( ), m_Map->GetMapNumPlayers( ) ) );
                         potential->SetDeleteMe( true );
                     } else {
-                        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+                        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
                         potentialCopy->SetBanned( );
                         potential->SetSocket( NULL );
                         potential->SetDeleteMe( true );
@@ -2585,7 +2585,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
         {
             if(m_GHost->m_AutoDenyUsers)
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2598,7 +2598,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
         {
             if(m_GHost->m_AutoDenyUsers)
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2614,7 +2614,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
         {
             if(m_GHost->m_AutoDenyUsers)
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2627,7 +2627,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
         {
             if(m_GHost->m_AutoDenyUsers)
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( ) ) );
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2647,7 +2647,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
             if(m_GHost->m_AutoDenyUsers)
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( ) ) );
 
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2689,7 +2689,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
                 m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
             CONSOLE_Print( "[GAME: " + m_GameName + "] player [" + joinPlayer->GetName( ) + "|" + potential->GetExternalIPString( ) + "] is trying to join but isn't reserved" );
 
-            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+            CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
             potentialCopy->SetBanned( );
             potential->SetSocket( NULL );
             potential->SetDeleteMe( true );
@@ -2705,7 +2705,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
         if(m_GHost->m_AutoDenyUsers)
             m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
         CONSOLE_Print( "[GAME: " + m_GameName + "] player [" + joinPlayer->GetName( ) + "|" + potential->GetExternalIPString( ) + "] is trying to join but isn't reserved" );
-        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
         potentialCopy->SetBanned( );
         potential->SetSocket( NULL );
         potential->SetDeleteMe( true );
@@ -2719,7 +2719,7 @@ void CBaseGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinP
     {
         if(m_GHost->m_AutoDenyUsers)
             m_Denied.push_back( joinPlayer->GetName( ) + " " + potential->GetExternalIPString( ) + " " + UTIL_ToString( GetTime( )+20 ) );
-        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ) );
+        CPotentialPlayer *potentialCopy = new CPotentialPlayer( m_Protocol, this, potential->GetSocket( ), m_GHost->m_PersistLobby );
         potentialCopy->SetBanned( );
         potential->SetSocket( NULL );
         potential->SetDeleteMe( true );
@@ -6507,7 +6507,7 @@ void CBaseGame :: MovePlayerToANewLobby( CGamePlayer *player ) {
     CBaseGame *targetGame = m_GHost->m_CurrentGames[m_GHost->m_CurrentGames.size( ) - 1];
     joinPlayer->SetTransferJoin( true );
     joinPlayer->SetTransferPID( player->GetPID( ) );
-    CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket );
+    CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket, m_GHost->m_PersistLobby );
     targetGame->EventPlayerJoined( potentialPlayer, joinPlayer );
 
     delete potentialPlayer;
@@ -6526,7 +6526,7 @@ void CBaseGame :: CreateNewLobbyForPlayer( CGamePlayer *player ) {
     CBaseGame *targetGame = m_GHost->m_CurrentGames[m_GHost->m_CurrentGames.size( ) - 1];
     joinPlayer->SetTransferJoin( true );
     joinPlayer->SetTransferPID( player->GetPID( ) );
-    CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket );
+    CPotentialPlayer* potentialPlayer = new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, playerSocket, m_GHost->m_PersistLobby );
     targetGame->EventPlayerJoined( potentialPlayer, joinPlayer );
 
     delete potentialPlayer;

@@ -365,7 +365,7 @@ CGHost :: CGHost( CConfig *CFG )
     m_UDPSocket->SetDontRoute( CFG->GetInt( "udp_dontroute", 0 ) == 0 ? false : true );
     m_ReconnectSocket = NULL;
     if(m_PersistLobby)
-	m_Socket = NULL;
+    m_Socket = NULL;
     m_GPSProtocol = new CGPSProtocol( );
     m_GCBIProtocol = new CGCBIProtocol( );
     m_CRC = new CCRC32( );
@@ -674,7 +674,7 @@ CGHost :: ~CGHost( )
     delete m_UDPSocket;
     delete m_ReconnectSocket;
     if(m_PersistLobby)
-	delete m_Socket;
+    delete m_Socket;
 
     for( vector<CTCPSocket *> :: iterator i = m_ReconnectSockets.begin( ); i != m_ReconnectSockets.end( ); ++i )
         delete *i;
@@ -1154,7 +1154,7 @@ bool CGHost :: Update( long usecBlock )
                     {
                         if( (*i)->GetEmptySlot( false ) != 255 )
                         {
-                            (*i)->m_Potentials.push_back( new CPotentialPlayer( (*i)->GetProtocol( ), (*i), NewSocket ) );
+                            (*i)->m_Potentials.push_back( new CPotentialPlayer( (*i)->GetProtocol( ), (*i), NewSocket, m_PersistLobby ) );
                             foundGame = true;
                             break;
                         }
@@ -1169,7 +1169,7 @@ bool CGHost :: Update( long usecBlock )
                         CBaseGame *targetGame = m_CurrentGames[m_CurrentGames.size( ) - 1];
                         targetGame->SetAutoStartPlayers( m_AutoHostAutoStartPlayers );
 
-                        targetGame->m_Potentials.push_back( new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, NewSocket ) );
+                        targetGame->m_Potentials.push_back( new CPotentialPlayer( targetGame->GetProtocol( ), targetGame, NewSocket, m_PersistLobby ) );
                     }
                 }
                 else
