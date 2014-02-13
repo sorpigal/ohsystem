@@ -1772,7 +1772,7 @@ void CBNET :: BotCommand(string Message, string User, bool Whisper, bool ForceRo
                     else
                     {
                         if( m_GHost->m_PersistLobby ) {
-                            if( m_GHost->m_CurrentGames.size( ) > 1 )
+                            if( m_GHost->m_CurrentGames.size( ) > 0 )
                             {
                                 for( vector<CBaseGame *> :: iterator i = m_GHost->m_CurrentGames.begin( ); i != m_GHost->m_CurrentGames.end( ); ++i )
                                 {
