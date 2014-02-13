@@ -615,48 +615,48 @@ CGHost :: CGHost( CConfig *CFG )
     if(m_PersistLobby) {
         m_Protocol = new CGameProtocol( this );
         m_EntryKey = rand();
-    }
 
-    // load the ip blacklist file
+        // load the ip blacklist file
 
-    if( !m_IPBlackListFile.empty( ) && m_PersistLobby)
-    {
-        ifstream in;
-        in.open( m_IPBlackListFile.c_str( ) );
-
-        if( in.fail( ) )
-            CONSOLE_Print( "[VIRTUAL] error loading IP blacklist file [" + m_IPBlackListFile + "]" );
-        else
+        if( !m_IPBlackListFile.empty( ) )
         {
-            CONSOLE_Print( "[VIRTUAL] loading IP blacklist file [" + m_IPBlackListFile + "]" );
-            string Line;
+            ifstream in;
+            in.open( m_IPBlackListFile.c_str( ) );
 
-            while( !in.eof( ) )
+            if( in.fail( ) )
+                CONSOLE_Print( "[VIRTUAL] error loading IP blacklist file [" + m_IPBlackListFile + "]" );
+            else
             {
-                getline( in, Line );
+                CONSOLE_Print( "[VIRTUAL] loading IP blacklist file [" + m_IPBlackListFile + "]" );
+                string Line;
 
-                // ignore blank lines and comments
+                while( !in.eof( ) )
+                {
+                    getline( in, Line );
 
-                if( Line.empty( ) || Line[0] == '#' )
-                    continue;
+                    // ignore blank lines and comments
 
-                // remove newlines and partial newlines to help fix issues with Windows formatted files on Linux systems
+                    if( Line.empty( ) || Line[0] == '#' )
+                        continue;
 
-                Line.erase( remove( Line.begin( ), Line.end( ), ' ' ), Line.end( ) );
-                Line.erase( remove( Line.begin( ), Line.end( ), '\r' ), Line.end( ) );
-                Line.erase( remove( Line.begin( ), Line.end( ), '\n' ), Line.end( ) );
+                    // remove newlines and partial newlines to help fix issues with Windows formatted files on Linux systems
 
-                // ignore lines that don't look like IP addresses
+                    Line.erase( remove( Line.begin( ), Line.end( ), ' ' ), Line.end( ) );
+                    Line.erase( remove( Line.begin( ), Line.end( ), '\r' ), Line.end( ) );
+                    Line.erase( remove( Line.begin( ), Line.end( ), '\n' ), Line.end( ) );
 
-                if( Line.find_first_not_of( "1234567890." ) != string :: npos )
-                    continue;
+                    // ignore lines that don't look like IP addresses
 
-                m_IPBlackList.insert( Line );
+                    if( Line.find_first_not_of( "1234567890." ) != string :: npos )
+                        continue;
+
+                    m_IPBlackList.insert( Line );
+                }
+
+                in.close( );
+
+                CONSOLE_Print( "[VIRTUAL] loaded " + UTIL_ToString( m_IPBlackList.size( ) ) + " lines from IP blacklist file" );
             }
-
-            in.close( );
-
-            CONSOLE_Print( "[VIRTUAL] loaded " + UTIL_ToString( m_IPBlackList.size( ) ) + " lines from IP blacklist file" );
         }
     }
 
@@ -672,8 +672,7 @@ CGHost :: ~CGHost( )
 {
     delete m_UDPSocket;
     delete m_ReconnectSocket;
-    if(m_PersistLobby)
-        delete m_Socket;
+    delete m_Socket;
 
     for( vector<CTCPSocket *> :: iterator i = m_ReconnectSockets.begin( ); i != m_ReconnectSockets.end( ); ++i )
         delete *i;
@@ -696,13 +695,6 @@ CGHost :: ~CGHost( )
         delete m_CurrentGame;
     }
     delete m_DB;
-
-    // warning: we don't delete any entries of m_Callables here because we can't be guaranteed that the associated threads have terminated
-    // this is fine if the program is currently exiting because the OS will clean up after us
-    // but if you try to recreate the CGHost object within a single session you will probably leak resources!
-
-//	if( !m_Callables.empty( ) )
-//		CONSOLE_Print( "[GHOST] warning - " + UTIL_ToString( m_Callables.size( ) ) + " orphaned callables were leaked (this is not an error)" );
 
     delete m_Language;
     delete m_Map;
@@ -1194,7 +1186,6 @@ bool CGHost :: Update( long usecBlock )
 
     if( m_LastAutoHostTime != 0 && GetTime( ) - m_LastAutoHostTime >= 10 && m_PersistLobby )
     {
-
         VirtualStartup( m_AutoHostMap, GAME_PUBLIC, false, m_AutoHostGameName, m_AutoHostOwner, m_AutoHostOwner, m_AutoHostServer, false, m_AutoHostGameType, m_HostCounter );
         m_LastAutoHostTime = 0;
     } else if( !m_AutoHostGameName.empty( ) && m_AutoHostMaximumGames != 0 && m_AutoHostAutoStartPlayers != 0 && GetTime( ) - m_LastAutoHostTime >= 30 && m_ReservedHostCounter != 0 ) {
